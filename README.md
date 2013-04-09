@@ -12,7 +12,7 @@ Currently show:
 
 Setting up:
 
-This is a Directx&cpu version,it can compile with dxsdk ,cximage ,and wxWidgets;Directx&gpu version has not complete
+This is a opengl&gpu version,it can compile with opengl, cg ,cximage ,sdl ,and wxWidgets;Directx&gpu version has not complete
 
 Special Thanks
 
