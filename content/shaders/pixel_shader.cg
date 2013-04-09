@@ -1,0 +1,48 @@
+// Note how the fragment struct was simply copied from our vertex shader code.
+// This is necessary if we want to use a vertex and pixel shader together.
+
+struct fragment
+{
+	float4 position  : POSITION;
+	float3 normal    : TEXCOORD1;
+	float2 texcoord0 : TEXCOORD0;
+};
+
+struct pixel
+{
+	float4 color : COLOR;
+};
+
+pixel main( fragment IN, 
+			uniform sampler2D colorTexture,
+			uniform sampler2D normalTexture,
+			uniform float4x4 mWorldViewProjection,
+			uniform float4x4 mWorldViewInverse,
+			uniform float4 vCamera,
+			uniform float4 vLight, 
+			uniform float  bLightFlag)
+{
+	pixel OUT;
+	
+    float4 normal = normalize( mul( mWorldViewInverse, float4(IN.normal,1.0f) ).xyzz );
+
+    float4 light = normalize( vLight );
+
+    float4 eye = vCamera;
+    float4 half = normalize( light + eye );
+    
+    float diffuse = dot( normal, light );
+
+    float specular = max( dot( normal, half ), 0 );
+    specular = pow( specular, 32 );
+
+	float4 ambientColor = float4( 0.1f, 0.1f, 0.1f, 0.1f );
+
+    float4 specularMaterial = float4( 1.0, 1.0, 1.0, 1.0 );
+	
+	if(bLightFlag != 0.0f)
+		OUT.color = diffuse*tex2D( colorTexture, IN.texcoord0 )  + specular * specularMaterial + tex2D( colorTexture, IN.texcoord0 )/2.0f;
+	else
+		OUT.color = tex2D( colorTexture, IN.texcoord0 );
+	return OUT;
+}
